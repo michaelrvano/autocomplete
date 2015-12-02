@@ -30,6 +30,9 @@ url: The url to send a post request at, which, will, return the results. Default
 ##Sample Code with all Options:
 ```
 $(el).mvAutocomplete({
+	callback: function() {
+		console.log('Click Back!');
+	},
 	container_class: 'special-results',
 	data: ['string', 'another one', 'city name', 'someone name'], //can be variable used here as well
 	loading_html: 'Loading...Spinner',
