@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>jQuery Auto Complete Sample</title>
+	<meta content="width=device-width, initial-scale=1.0" name="viewport" />
+	<meta content="jQuery Autocomplete Plugin Developed by Michael Vano" name="description" />
+	<meta content="Michael Vano" name="author" />
+
+	<meta property="og:title" content="jQuery Auto Complete Sample by Michael Vano" />
+	<meta property="og:site_name" content="jQuery Auto Complete Sample" />
+	<meta property="og:url" content="http://portfolio.af13.ca/autocomplete" />
+	<meta property="og:description" content="A jQuery autocomplete function" />
+	<meta property="og:image" content="https://avatars0.githubusercontent.com/u/5809316?v=3&s=460" />
+
+	<link rel="canonical" href="http://portfolio.af13.ca/autocomplete" />
+
+	<!-- STYLES -->
+	<link href="mv-autocomplete.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+	<input type="text" autocomplete />
+	<input type="text" autocomplete />
+	<!-- SCRIPTS -->
+	<script src="jquery-1.11.3.min.js" type="text/javascript"></script>
+	<script src="mv-autocomplete.js" type="text/javascript"></script>
+	<script>
+		var data_sample = [
+			'Bobby Renton',
+			'Carl Sagan',
+			'Tony Hawk',
+			'Jokemk Turhtn',
+			'Claksif Asokmd',
+			'Okiemf Iajshs',
+			'Ujsifdj Isdkfk',
+			'Poliw Difkgls'
+		];
+		$('[autocomplete]').mvAutocomplete({
+			data: 				data_sample,
+			container_class: 	'results',
+			result_class: 		'result'
+		});
+	</script>
+</body>
+</html>
+
