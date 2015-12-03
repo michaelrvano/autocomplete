@@ -19,8 +19,12 @@
 	<link href="mv-autocomplete.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-	<input type="text" placeholder="From Data Object..." autocomplete />
-	<input type="text" placeholder="From Api Call..."autocomplete />
+	<h1> jQuery Auto Complete Demo </h1>
+	<h3> Javascript Object Source</h3>
+	<input type="text" placeholder="From Data Object..." data-object />
+	<p> </p>
+	<h3> API Source</h3>
+	<input type="text" placeholder="From Api Call..." api-call />
 	<!-- SCRIPTS -->
 	<script src="jquery-1.11.3.min.js" type="text/javascript"></script>
 	<script src="mv-autocomplete.js" type="text/javascript"></script>
@@ -42,12 +46,28 @@
 		,"Yemen","Zambia","Zimbabwe"];
 
 
-		$('[autocomplete]').mvAutocomplete({
+		$('[data-object]').mvAutocomplete({
 			data: countries,
 			container_class: 'results',
 			result_class: 'result',
 			url: '',
 			loading_html: 'Loading...',
+			post_data: {
+				class: 'tasks',
+				action: 'searchTasks',
+				options: {
+					id: 10,
+					name: 'Bob'
+				}
+			},
+			callback: function(el, selected) {
+				console.log('Click Back!');
+			}
+		});
+
+		$('[api-call]').mvAutocomplete({
+			url: '/api/',
+			loading_html: 'Loading XD',
 			post_data: {
 				class: 'tasks',
 				action: 'searchTasks',
