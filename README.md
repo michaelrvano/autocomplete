@@ -58,3 +58,4 @@ $(el).mvAutocomplete({
 - Can work on multiple text inputs, if for example, if two input elements have the class "ac" and you used that to run the function ( i.e $('.ac').mvAutocomplete(); ). Both of those inputs will have the exact same functionality
 - To have 2 separate text inputs do separate autocomplete searches, each one has to be referenced differently. 
 - This is mainly for my own use, but feel free to grab it and modify it. I don't mind. All open source. Would be nice if you kept my name in the javascript file. :p
+- May try and add more options in the future, like method type and Headers to pass if using straight Ajax request

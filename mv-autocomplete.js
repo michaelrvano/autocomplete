@@ -31,7 +31,7 @@ var Autocomplete = function(el, options) {
 	_this.post_data = (typeof options.post_data !== typeof undefined) ? options.post_data : {};
 	_this.callback = (typeof options.callback !== typeof undefined && typeof options.callback === 'function') ? options.callback : function() {};
 	_this.html = $('<div class="'+_this.container_class+'" ac-results></div>');
-	window.addEventListener('keyup', _this.keypress.bind(this), false);
+	window.addEventListener('keyup', _this.keypress.bind(this), true);
 	_this.processing;
 	if (!_this.el.is('input[type="text"]')) 
 	{
@@ -111,57 +111,69 @@ Autocomplete.prototype.showResults = function() {
 Autocomplete.prototype.selectResult = function() {
 	console.log('Clicked Option');
 	var _this = this;
-	var selected = _this.html.find('[ac-result].active');
+	var selected = _this.html.find('[ac-active]');
 	var text = selected.text();
 	_this.el.val(text);
-	$('[ac-results]').hide();
-	$('[ac-results]').remove();
+	_this.el.focus();
+	_this.html.hide();
+	_this.html.remove();
 	_this.callback(_this.el, selected);
 };
 
 Autocomplete.prototype.keypress = function(e) {
-	// var _this = this;
-	// var keycode = e.keyCode;
-	// if (_this.html.is(':visible'))
-	// {
-	// 	switch(keycode)
-	// 	{
-	// 		case 40:
-	// 			// e.preventDefault();
-	// 			_this.navigate(1);
-	// 			console.log('Move Down!');
-	// 		break;
-	// 		case 38:
-	// 			// e.preventDefault();
-	// 			_this.navigate(-1);
-	// 			console.log('Move Up!');
-	// 		break;
-	// 		case 13:
-	// 			// e.preventDefault();
-	// 			console.log(_this.html.find('.active'));
-	// 			var active = _this.html.find('.active');
-	// 			if (active.length > 0) {
-	// 				active.trigger('click'); 
-	// 				console.log('Selected');
-	// 			}
-	// 		break;
-	// 	}
-	// }
+	var _this = this;
+	var keycode = e.keyCode;
+	if (_this.html.is(':visible'))
+	{
+		switch(keycode)
+		{
+			case 40:
+				e.preventDefault();
+				e.stopPropagation();
+				_this.navigate('down');
+				console.log('Move Down!');
+			break;
+			case 38:
+				e.preventDefault();
+				e.stopPropagation();
+				_this.navigate('up');
+				console.log('Move Up!');
+			break;
+			case 13:
+				e.preventDefault();
+				e.stopPropagation();
+				var active = _this.html.find('[ac-active]');			
+				active.trigger('click');
+			break;
+		}
+	}
 };
 
-Autocomplete.prototype.navigate = function(step) {
-	console.log('Navigate - '+step);
-	// if (selected != undefined)
-	// {
-	// 	if (selected >= results.length) { selected = 0; }
-	// 	else if (selected < results.length) { selected++; }
-	// }
-	// else { selected = 0; }
-	// // console.log(results[selected]);
-	// results.removeClass('active');
-	// results.removeAttr('ac-active');
-	// $(results[selected]).addClass('active');
-	// $(results[selected]).attr('ac-active', '');
+Autocomplete.prototype.navigate = function(direction) {
+	var _this = this;
+	var results = _this.html.find('[ac-result]');
+	var selected;
+	if (results.length > 0)
+	{
+		for(i=0; i<results.length; i++) {
+			if (results[i].hasAttribute('ac-active')) {
+				selected = i;
+			}
+		}
+		if (direction == 'up')
+		{
+			if (selected == 0) { selected = results.length - 1; }
+			else if (selected == undefined) { selected = results.length - 1;}
+			else { selected--; }
+		}
+		else if (direction == 'down')
+		{
+			if (selected == (results.length - 1)) { selected = 0; }
+			else if (selected == undefined) { selected = 0;}
+			else { selected++; }
+		}
+		$(results[selected]).trigger('mouseover');
+	}
 };
 
 $(document).mouseup(function (e)
