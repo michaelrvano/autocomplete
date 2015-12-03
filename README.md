@@ -1,8 +1,10 @@
 # jQuery Auto Complete function
 A simple autocomplete function to use on any text input. jQuery required. 
 
+###Live Demo:
+http://af13.ca/autocomplete
 
-Example code to initialize the autocomplete:
+###Example code to initialize the autocomplete:
 
 ```
 $(el).mvAutocomplete(options);
@@ -11,7 +13,7 @@ $(el).mvAutocomplete(options);
 
 ##The options that can be passed into the function are as follows:
 
-callback: A function to run when a results has been clicked
+callback: A function to run when a result has been clicked/selected
 
 container_class: The class that will be used on the container element holding the results. Default is "results".
 
@@ -48,7 +50,10 @@ $(el).mvAutocomplete({
 
 
 ##Other notes:
+- Still working on create a keypress action to navigate through the results.
 - Works only on text inputs. 
+- by default, I have the class "active" being placed on the result that gets selected or hovered over. Used mainly to highlight the selected item.
+- also by default, I attached the "autocomplete" attribute to the input text box to disable the browser's default auto complete
 - The url should return a single array of strings. No multi-dimensional arrays. Too complex. :p
 - Can work on multiple text inputs, if for example, if two input elements have the class "ac" and you used that to run the function ( i.e $('.ac').mvAutocomplete(); ). Both of those inputs will have the exact same functionality
 - To have 2 separate text inputs do separate autocomplete searches, each one has to be referenced differently. 

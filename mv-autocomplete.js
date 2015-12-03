@@ -1,21 +1,8 @@
 /*
 * Written by Michael Vano
 * Front End Developer
+* Visit https://github.com/michaelrvano/autocomplete for documentation on usage of this plugin
 */
-
-
-/* ===================
-- OPTIONS -
-data: an array or object with a list of data already loaded. Should not be multidimensional array
-
-url: use this to grab from a url that will return a list of an array or list of object based on the query sent.
-	URL should accept 'query' as a POST field name.
-
-container_class: class used on the container displaying the results
-
-result_class: class to be used on each of the result items
-
-=====================*/
 (function ($) {
 	$.fn.mvAutocomplete = function(options) {
 		var options = (typeof options !== typeof undefined) ? options : {};
@@ -33,13 +20,18 @@ var Autocomplete = function(el, options) {
 	// console.log('Build Object');
 	var _this = this;
 	_this.el = el;
+	_this.el.attr('mv-ac', '');
+	_this.el.attr('autocomplete', 'off');
 	_this.data = (typeof options.data !== typeof undefined) ? options.data : {};
 	_this.url = (typeof options.url !== typeof undefined) ? options.url : '';
-	_this.container_class = (typeof options.container_class !== typeof undefined) ? options.container_class : '';
-	_this.result_class = (typeof options.result_class !== typeof undefined) ? options.result_class : '';
+	_this.container_class = (typeof options.container_class !== typeof undefined) ? options.container_class : 'results';
+	_this.result_class = (typeof options.result_class !== typeof undefined) ? options.result_class : 'result';
+	_this.loading_html = (typeof options.loading_html !== typeof undefined) ? options.loading_html : 'Loading...';
 	_this.results = [];
 	_this.post_data = (typeof options.post_data !== typeof undefined) ? options.post_data : {};
-	_this.callback = (typeof options.callback !== typeof undefined && typeof options.callback === 'function') ? options.callback : '';
+	_this.callback = (typeof options.callback !== typeof undefined && typeof options.callback === 'function') ? options.callback : function() {};
+	_this.html = $('<div class="'+_this.container_class+'" ac-results></div>');
+	window.addEventListener('keyup', _this.keypress.bind(this), false);
 	_this.processing;
 	if (!_this.el.is('input[type="text"]')) 
 	{
@@ -56,11 +48,19 @@ Autocomplete.prototype.search = function() {
 	// console.log('Search');
 	var _this = this;
 	var value = _this.el.val();
+	var top = _this.el.offset().top;
+	var left = _this.el.offset().left;
+	var height = _this.el.outerHeight();
+	var top_position = top+height+5;
+	var inline_style = 'position:absolute; top:'+top_position+'px; left:'+left+'px; max-height:300px; overflow:auto;';
+	if ($('[ac-results]').length > 0) { $('[ac-results]').remove(); }
+	_this.html.attr('style', inline_style);
 	if (value != '')
 	{
 		_this.results = [];
 		if (_this.url != undefined && _this.url != '')
 		{
+			_this.html.html(_this.loading_html);
 			_this.post_data.query = value;
 			if (_this.processing != undefined) { _this.processing.abort(); }
 			_this.processing = $.post(_this.url, _this.post_data, function(data){
@@ -73,11 +73,12 @@ Autocomplete.prototype.search = function() {
 			if (!$.isEmptyObject(_this.data))
 			{
 				$.each(_this.data, function(k,v) {
-					if (v.indexOf(value) > -1) { _this.results.push(v); }
+					if (v.toLowerCase().indexOf(value.toLowerCase()) > -1) { _this.results.push(v); }
 				});
 				_this.showResults();
 			}
 		}
+		$('body').append(_this.html);
 	}
 };
 
@@ -85,10 +86,90 @@ Autocomplete.prototype.showResults = function() {
 	var _this = this;
 	if (_this.results.length > 0)
 	{
-		console.log('Results!!');
+		for(i=0; i<_this.results.length; i++) 
+		{
+			var result = '<div class="'+_this.result_class+'" ac-result="'+i+'">'+_this.results[i]+'</div>';
+			if (i == 0) { _this.html.html(result); }
+			else { _this.html.append(result); }
+		}
+		_this.html.find('[ac-result]').unbind('mouseover').mouseover(function() {
+			$('[ac-result]').removeAttr('ac-active');
+			$('[ac-result]').removeClass('active');
+			$(this).attr('ac-active', '');
+			$(this).addClass('active');
+		});
+		_this.html.find('[ac-result]').unbind('click').click(function() { _this.selectResult(); });
 	}
 	else
 	{
-		console.log('No Results');
+		_this.html.html('');
+		_this.html.hide();
 	}
+	
 };
+
+Autocomplete.prototype.selectResult = function() {
+	console.log('Clicked Option');
+	var _this = this;
+	var selected = _this.html.find('[ac-result].active');
+	var text = selected.text();
+	_this.el.val(text);
+	$('[ac-results]').hide();
+	$('[ac-results]').remove();
+	_this.callback(_this.el, selected);
+};
+
+Autocomplete.prototype.keypress = function(e) {
+	// var _this = this;
+	// var keycode = e.keyCode;
+	// if (_this.html.is(':visible'))
+	// {
+	// 	switch(keycode)
+	// 	{
+	// 		case 40:
+	// 			// e.preventDefault();
+	// 			_this.navigate(1);
+	// 			console.log('Move Down!');
+	// 		break;
+	// 		case 38:
+	// 			// e.preventDefault();
+	// 			_this.navigate(-1);
+	// 			console.log('Move Up!');
+	// 		break;
+	// 		case 13:
+	// 			// e.preventDefault();
+	// 			console.log(_this.html.find('.active'));
+	// 			var active = _this.html.find('.active');
+	// 			if (active.length > 0) {
+	// 				active.trigger('click'); 
+	// 				console.log('Selected');
+	// 			}
+	// 		break;
+	// 	}
+	// }
+};
+
+Autocomplete.prototype.navigate = function(step) {
+	console.log('Navigate - '+step);
+	// if (selected != undefined)
+	// {
+	// 	if (selected >= results.length) { selected = 0; }
+	// 	else if (selected < results.length) { selected++; }
+	// }
+	// else { selected = 0; }
+	// // console.log(results[selected]);
+	// results.removeClass('active');
+	// results.removeAttr('ac-active');
+	// $(results[selected]).addClass('active');
+	// $(results[selected]).attr('ac-active', '');
+};
+
+$(document).mouseup(function (e)
+{
+	var container = $('[ac-results], [mv-ac]');
+	if (!container.is(e.target) && container.has(e.target).length === 0) 
+	{
+		$('[ac-results]').hide();
+		$('[ac-results]').remove();
+	}
+});

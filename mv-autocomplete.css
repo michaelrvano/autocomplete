@@ -1,7 +1,24 @@
-.results {
+input {
+	padding:5px 10px;
+}
 
+.results {
+	background-color:#fff;
+	border:1px solid #ddd;
+	box-shadow:0 0 5px 0 rgba(0,0,0,0.1);
+	-webkit-box-shadow:0 0 5px 0 rgba(0,0,0,0.1);
+	font-family: 'Lato', sans-serif;
+	font-size:14px;
+	padding:2px 4px;
 }
 
 .result {
+	padding:3px 5px;
+	cursor:pointer;
+}
 
+.result.active,
+.result.active:active {
+	background-color:#5897fb;
+	color:#fff;
 }
